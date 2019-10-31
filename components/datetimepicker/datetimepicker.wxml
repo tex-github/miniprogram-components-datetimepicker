@@ -1,0 +1,9 @@
+<view class="view-body">
+  <text class='item-key'>{{title}}<text style="color:red" wx:if="{{isRequired}}">*</text></text>
+  <view class="item-value">
+    <picker mode="multiSelector" bindchange="bindPickerChange" bindcolumnchange="bindPickerColumnChange" value="{{multiIndex}}" range="{{multiArray}}">
+      <input disabled="{{true}}" value='{{value}}' name='{{name}}' />
+      <image class="img-arrow" src='/images/date_icon.png' />
+    </picker>
+  </view>
+</view>
