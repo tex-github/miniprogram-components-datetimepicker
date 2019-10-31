@@ -168,7 +168,8 @@ Component({
      * 列改变时
      */
     bindPickerColumnChange: function(e) {
-      if (e.detail.column == 1) {
+      //当前第二类为月份时需要初始化当月的天数
+      if (e.detail.column == 1 && this.properties.format != 'HH:mm:ss') {
         let num = parseInt(this.data.multiArray[e.detail.column][e.detail.value]);
         let temp = [];
         if (num == 1 || num == 3 || num == 5 || num == 7 || num == 8 || num == 10 || num == 12) { //31天的月份
