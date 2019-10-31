@@ -5,7 +5,7 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "6位数字密码输入框",
+    "navigationBarTitleText": "时间选择器",
     "navigationBarTextStyle": "black"
   },
   "sitemapLocation": "sitemap.json"

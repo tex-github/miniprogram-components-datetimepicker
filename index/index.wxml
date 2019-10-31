@@ -1,1 +1,1 @@
-<DateTimePicker title="发生时间" isRequired="true" bind:dateTimePicker="onDateTimePicker" name='time1' format='HH:mm:ss' />
+<DateTimePicker title="发生时间" isRequired="true" bind:dateTimePicker="onDateTimePicker" name='time1' format='yyyy-MM-dd HH:mm:ss' />

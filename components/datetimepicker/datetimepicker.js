@@ -1,43 +1,5 @@
 // components/datatimepicker/datatimepicker.js
-const years = []
-const months = []
-const days = []
-const hours = []
-const minutes = []
-const seconds = []
-for (let i = 1990; i <= 2099; i++) {
-  years.push(i + '')
-}
-for (let i = 1; i <= 12; i++) {
-  if (i < 10) {
-    i = "0" + i;
-  }
-  months.push(i + '')
-}
-for (let i = 1; i <= 31; i++) {
-  if (i < 10) {
-    i = "0" + i;
-  }
-  days.push(i + '')
-}
-for (let i = 0; i <= 23; i++) {
-  if (i < 10) {
-    i = "0" + i;
-  }
-  hours.push(i + '')
-}
-for (let i = 0; i <= 59; i++) {
-  if (i < 10) {
-    i = "0" + i;
-  }
-  minutes.push(i + '')
-}
-for (let i = 0; i <= 59; i++) {
-  if (i < 10) {
-    i = "0" + i;
-  }
-  seconds.push(i + '')
-}
+
 Component({
   behaviors: ['wx://form-field'],
   properties: {
@@ -57,6 +19,8 @@ Component({
   data: {},
   lifetimes: {
     attached: function() {
+      //初始化时间选择轴
+      this.initColumn()
       //当前时间 年月日 时分秒
       const date = new Date()
       const curYear = date.getFullYear()
@@ -74,12 +38,12 @@ Component({
       var showSecond = curSecond < 10 ? ('0' + curSecond) : curSecond
 
       //当前时间在picker列上面的索引 为了当打开时间选择轴时选中当前的时间
-      var indexYear = years.indexOf(curYear + '')
-      var indexMonth = months.indexOf(showMonth + '')
-      var indexDay = days.indexOf(showDay + '')
-      var indexHour = hours.indexOf(showHour + '')
-      var indexMinute = minutes.indexOf(showMinute + '')
-      var indexSecond = seconds.indexOf(showSecond + '')
+      var indexYear = this.data.years.indexOf(curYear + '')
+      var indexMonth = this.data.months.indexOf(showMonth + '')
+      var indexDay = this.data.days.indexOf(showDay + '')
+      var indexHour = this.data.hours.indexOf(showHour + '')
+      var indexMinute = this.data.minutes.indexOf(showMinute + '')
+      var indexSecond = this.data.seconds.indexOf(showSecond + '')
 
       var multiIndex = []
       var multiArray = []
@@ -89,22 +53,22 @@ Component({
       if (format == 'yyyy-MM-dd') {
         multiIndex = [indexYear, indexMonth, indexDay]
         value = `${curYear}-${showMonth}-${showDay}`
-        multiArray = [years, months, days]
+        multiArray = [this.data.years, this.data.months, this.data.days]
       }
       if (format == 'HH:mm:ss') {
         multiIndex = [indexHour, indexMinute, indexSecond]
         value = `${showHour}:${showMinute}:${showSecond}`
-        multiArray = [hours, minutes, seconds]
+        multiArray = [this.data.hours, this.data.minutes, this.data.seconds]
       }
       if (format == 'yyyy-MM-dd HH:mm') {
         multiIndex = [indexYear, indexMonth, indexDay, indexHour, indexMinute]
         value = `${curYear}-${showMonth}-${showDay} ${showHour}:${showMinute}`
-        multiArray = [years, months, days, hours, minutes]
+        multiArray = [this.data.years, this.data.months, this.data.days, this.data.hours, this.data.minutes]
       }
       if (format == 'yyyy-MM-dd HH:mm:ss') {
         multiIndex = [indexYear, indexMonth, indexDay, indexHour, indexMinute, indexSecond]
         value = `${curYear}-${showMonth}-${showDay} ${showHour}:${showMinute}:${showSecond}`
-        multiArray = [years, months, days, hours, minutes, seconds]
+        multiArray = [this.data.years, this.data.months, this.data.days, this.data.hours, this.data.minutes, this.data.seconds]
 
       }
       this.setData({
@@ -112,9 +76,7 @@ Component({
         multiIndex: multiIndex,
         multiArray: multiArray,
       })
-
-    },
-    detached: function() {},
+    }
   },
   /**
    * 组件的方法列表
@@ -164,10 +126,68 @@ Component({
       })
       this.triggerEvent('dateTimePicker', showTime)
     },
+    //初始化时间选择轴
+    initColumn: function() {
+      const years = []
+      const months = []
+      const days = []
+      const hours = []
+      const minutes = []
+      const seconds = []
+      for (let i = 1990; i <= 2099; i++) {
+        years.push(i + '')
+      }
+      for (let i = 1; i <= 12; i++) {
+        if (i < 10) {
+          i = "0" + i;
+        }
+        months.push(i + '')
+      }
+      for (let i = 1; i <= 31; i++) {
+        if (i < 10) {
+          i = "0" + i;
+        }
+        days.push(i + '')
+      }
+      for (let i = 0; i <= 23; i++) {
+        if (i < 10) {
+          i = "0" + i;
+        }
+        hours.push(i + '')
+      }
+      for (let i = 0; i <= 59; i++) {
+        if (i < 10) {
+          i = "0" + i;
+        }
+        minutes.push(i + '')
+      }
+      for (let i = 0; i <= 59; i++) {
+        if (i < 10) {
+          i = "0" + i;
+        }
+        seconds.push(i + '')
+      }
+      this.setData({
+        years: years,
+        months: months,
+        days: days,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds
+      })
+    },
+
     /**
-     * 列改变时
+     * 列改变时触发
      */
     bindPickerColumnChange: function(e) {
+      //获取年份 用于计算改年的2月份为平年还是闰年
+      if (e.detail.column == 0 && this.properties.format != 'HH:mm:ss') {
+        var chooseYear = this.data.multiArray[e.detail.column][e.detail.value];
+        this.setData({
+          chooseYear: chooseYear
+        })
+      }
       //当前第二类为月份时需要初始化当月的天数
       if (e.detail.column == 1 && this.properties.format != 'HH:mm:ss') {
         let num = parseInt(this.data.multiArray[e.detail.column][e.detail.value]);
@@ -193,8 +213,7 @@ Component({
             ['multiArray[2]']: temp
           });
         } else if (num == 2) { //2月份天数
-          let year = parseInt(this.data.choose_year);
-          console.log(year);
+          let year = parseInt(this.data.chooseYear);
           if (((year % 400 == 0) || (year % 100 != 0)) && (year % 4 == 0)) {
             for (let i = 1; i <= 29; i++) {
               if (i < 10) {
@@ -226,5 +245,5 @@ Component({
       data.multiIndex[e.detail.column] = e.detail.value;
       this.setData(data);
     },
-  }
+  },
 })
