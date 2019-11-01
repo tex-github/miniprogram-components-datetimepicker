@@ -19,8 +19,6 @@ Component({
   data: {},
   lifetimes: {
     attached: function() {
-      //初始化时间选择轴
-      this.initColumn()
       //当前时间 年月日 时分秒
       const date = new Date()
       const curYear = date.getFullYear()
@@ -29,6 +27,12 @@ Component({
       const curHour = date.getHours()
       const curMinute = date.getMinutes()
       const curSecond = date.getSeconds()
+
+      //初始化时间选择轴
+      this.setData({
+        chooseYear: curYear
+      })
+      this.initColumn(curMonth)
 
       //不足两位的前面好补0 因为后面要获取在时间轴上的索引 时间轴初始化的时候都是两位
       var showMonth = curMonth < 10 ? ('0' + curMonth) : curMonth
@@ -72,9 +76,12 @@ Component({
 
       }
       this.setData({
-        value: value,
-        multiIndex: multiIndex,
-        multiArray: multiArray,
+        value,
+        multiIndex,
+        multiArray,
+        curMonth,
+        chooseYear: curYear,
+
       })
     }
   },
@@ -84,7 +91,6 @@ Component({
   methods: {
     //获取时间日期
     bindPickerChange: function(e) {
-      // console.log('picker发送选择改变，携带值为', e.detail.value)
       this.setData({
         multiIndex: e.detail.value
       })
@@ -127,7 +133,7 @@ Component({
       this.triggerEvent('dateTimePicker', showTime)
     },
     //初始化时间选择轴
-    initColumn: function() {
+    initColumn(curMonth) {
       const years = []
       const months = []
       const days = []
@@ -143,11 +149,25 @@ Component({
         }
         months.push(i + '')
       }
-      for (let i = 1; i <= 31; i++) {
-        if (i < 10) {
-          i = "0" + i;
+
+      if (curMonth == 1 || curMonth == 3 || curMonth == 5 || curMonth == 7 || curMonth == 8 || curMonth == 10 || curMonth == 12) {
+        for (let i = 1; i <= 31; i++) {
+          if (i < 10) {
+            i = "0" + i;
+          }
+          days.push(i + '')
         }
-        days.push(i + '')
+      }
+      if (curMonth == 4 || curMonth == 6 || curMonth == 9 || curMonth == 11) {
+        for (let i = 1; i <= 30; i++) {
+          if (i < 10) {
+            i = "0" + i;
+          }
+          days.push(i + '')
+        }
+      }
+      if (curMonth == 2) {
+        this.setFebDays()
       }
       for (let i = 0; i <= 23; i++) {
         if (i < 10) {
@@ -168,12 +188,12 @@ Component({
         seconds.push(i + '')
       }
       this.setData({
-        years: years,
-        months: months,
-        days: days,
-        hours: hours,
-        minutes: minutes,
-        seconds: seconds
+        years,
+        months,
+        days,
+        hours,
+        minutes,
+        seconds
       })
     },
 
@@ -185,10 +205,13 @@ Component({
       if (e.detail.column == 0 && this.properties.format != 'HH:mm:ss') {
         var chooseYear = this.data.multiArray[e.detail.column][e.detail.value];
         this.setData({
-          chooseYear: chooseYear
+          chooseYear
         })
+        if (this.data.curMonth == '02' || this.data.chooseMonth == '02') {
+          this.setFebDays()
+        }
       }
-      //当前第二类为月份时需要初始化当月的天数
+      //当前第二为月份时需要初始化当月的天数
       if (e.detail.column == 1 && this.properties.format != 'HH:mm:ss') {
         let num = parseInt(this.data.multiArray[e.detail.column][e.detail.value]);
         let temp = [];
@@ -213,30 +236,8 @@ Component({
             ['multiArray[2]']: temp
           });
         } else if (num == 2) { //2月份天数
-          let year = parseInt(this.data.chooseYear);
-          if (((year % 400 == 0) || (year % 100 != 0)) && (year % 4 == 0)) {
-            for (let i = 1; i <= 29; i++) {
-              if (i < 10) {
-                i = "0" + i;
-              }
-              temp.push("" + i);
-            }
-            this.setData({
-              ['multiArray[2]']: temp
-            });
-          } else {
-            for (let i = 1; i <= 28; i++) {
-              if (i < 10) {
-                i = "0" + i;
-              }
-              temp.push("" + i);
-            }
-            this.setData({
-              ['multiArray[2]']: temp
-            });
-          }
+          this.setFebDays()
         }
-        console.log(this.data.multiArray[2]);
       }
       var data = {
         multiArray: this.data.multiArray,
@@ -245,5 +246,34 @@ Component({
       data.multiIndex[e.detail.column] = e.detail.value;
       this.setData(data);
     },
+    //计算二月份天数
+    setFebDays() {
+      let year = parseInt(this.data.chooseYear);
+      let temp = [];
+      if (year % (year % 100 ? 4 : 400) ? false : true) {
+        for (let i = 1; i <= 29; i++) {
+          if (i < 10) {
+            i = "0" + i;
+          }
+          temp.push("" + i);
+        }
+        this.setData({
+          ['multiArray[2]']: temp,
+          chooseMonth: '02'
+
+        });
+      } else {
+        for (let i = 1; i <= 28; i++) {
+          if (i < 10) {
+            i = "0" + i;
+          }
+          temp.push("" + i);
+        }
+        this.setData({
+          ['multiArray[2]']: temp,
+          chooseMonth: '02'
+        });
+      }
+    }
   },
 })
