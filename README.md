@@ -1,6 +1,6 @@
 # miniprogram-components-datetimepicker
 
-在你页面中的json中添加引用，路径根据你的实际工程目录来写。/r/n
+在你页面中的json中添加引用，路径根据你的实际工程目录来写。
 {
   "usingComponents": {
     "DateTimePicker": "/components/datetimepicker/datetimepicker"
