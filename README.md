@@ -1,5 +1,6 @@
 # miniprogram-components-datetimepicker
-
+**效果图**<br>
+![image](https://github.com/tex-github/miniprogram-components-datetimepicker/blob/master/datetimepicker.jpg)
 在你页面中的json中添加引用，路径根据你的实际工程目录来写。<br>
 ```
 {
