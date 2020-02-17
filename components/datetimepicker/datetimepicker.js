@@ -136,7 +136,7 @@ Component({
     initColumn(curMonth) {
       const years = []
       const months = []
-      const days = []
+      let days = []
       const hours = []
       const minutes = []
       const seconds = []
@@ -167,7 +167,7 @@ Component({
         }
       }
       if (curMonth == 2) {
-        this.setFebDays()
+        days = this.setFebDays();
       }
       for (let i = 0; i <= 23; i++) {
         if (i < 10) {
@@ -223,7 +223,7 @@ Component({
             temp.push("" + i);
           }
           this.setData({
-            ['multiArray[2]']: temp
+            'multiArray[2]': temp
           });
         } else if (num == 4 || num == 6 || num == 9 || num == 11) { //30天的月份
           for (let i = 1; i <= 30; i++) {
@@ -233,7 +233,7 @@ Component({
             temp.push("" + i);
           }
           this.setData({
-            ['multiArray[2]']: temp
+            'multiArray[2]': temp
           });
         } else if (num == 2) { //2月份天数
           this.setFebDays()
@@ -258,7 +258,7 @@ Component({
           temp.push("" + i);
         }
         this.setData({
-          ['multiArray[2]']: temp,
+          'multiArray[2]': temp,
           chooseMonth: '02'
 
         });
@@ -270,10 +270,11 @@ Component({
           temp.push("" + i);
         }
         this.setData({
-          ['multiArray[2]']: temp,
+          'multiArray[2]': temp,
           chooseMonth: '02'
         });
       }
+      return temp;
     }
   },
 })
